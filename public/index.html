@@ -60,6 +60,8 @@
 
     <script type="module" src="cmp/mi-footer.js"></script>
     <link rel="stylesheet" href="css/estilos.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet">
 
     <!-- Carga el núcleo de Firebase. Actualiza los números de versión cuando
     sea necesario. Hemos quitado el atributo defer que aparecía originalmente.
@@ -72,46 +74,52 @@
     <!-- Carga la configuración de tu proyecto en el servidor de Firebase. -->
     <script src="/__/firebase/init.js"></script>
     <body>
+      <form class="menu">
         <header>
-            <div class="title-header">Registro de Auto</div>
+          <h1>Registro auto</h1>
+          <div class="ext">
+            <button type="button" onclick="extension.classList.toggle('muestra');">
+              <span class="material-icons">more_vert</span>
+            </button>
+            <ul id="extension">
+              <li>
+                <button class="boton_personalizado sucess" type="button" onclick="guarda();">Guardar</button>
+              </li>
+              <li>
+              <button class="boton_personalizado sucess" id="agregar" type="button" onclick="alta();">Agregar...</button>
+              </li>
+              <li>
+                <button class="boton_personalizado error" id="eliminar" type="button" onclick="elimina();">Eliminar</button>
+                </li>
+            </ul>
+          </div>
         </header>
+      </form>
 
-        <div class="container">
-            <form action="javascript:guarda()">            
+        <div class="container mt-5">
+            <form >            
                 <div class="row">
-                    <input id="marca" type="text" placeholder="Marca del auto" autocomplete="off" required />
-                    <input id="modelo1" type="text" placeholder="Modelo del auto" autocomplete="off" required />
-                    <input id="matricula" type="text" placeholder="Matricula del auto" autocomplete="off" required />
-                </div>
-                
-                <div class="row">
-                    <div class="col-3">
-                        <button class="boton_personalizado sucess" id="agregar" type="button" onclick="alta();">Agregar...</button>
-                    </div>
-                    <div class="col-3">
-                        <button class="boton_personalizado sucess" type="submit">Guardar</button>
-                    </div>
-                    <div class="col-3">
-                        <button class="boton_personalizado error" id="eliminar" type="button" onclick="elimina();">Eliminar</button>
-                    </div>
-                </div>
+                  <p class="campo flotante">
+                    <textarea id="marca" rows="3" required></textarea>
+                    <label for="marca">Marca del auto </label>
+                  </p>
+                  <p class="campo flotante">
+                    <textarea id="modelo1" rows="3" required></textarea>
+                    <label for="modelo1">Modelo del auto </label>
+                  </p>
+                  <p class="campo flotante">
+                    <textarea id="color" rows="3" required></textarea>
+                    <label for="color">Color del auto </label>
+                  </p>  
+                </div>  
             </form>
 
             <div class="row">
-              <table id="tlista">
-                <thead>
-                  <tr>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Matricula</th>
-                  </tr>
-                </thead>
-                <tbody id="lista">
-                  <tr>
-                    <td colspan="3"><progress max="100">Cargando…</progress></td>
-                  </tr>
-                </tbody>
-              </table>
+            </select>
+            <ul id="lista">
+                <li><progress max="100">Cargando…</progress></li>
+    
+            </ul>
 
                 
             </div>
@@ -128,19 +136,26 @@
           firestore.collection("AUTO").orderBy("AU_MODELO").onSnapshot;
           firestore
             .collection("AUTO")
-            .orderBy("AU_MATRICULA")
+            .orderBy("AU_COLOR")
             .onSnapshot(
               (documentos) => {
                 let inner = "";
+                console.log(documentos)
                 documentos.forEach(
                   (doc) =>
                     (inner +=
                       /* html */
-                    `<tr onclick="muestra('${cod(doc.id)}')">
-                      <td>${cod(doc.data().AU_MARCA)}</td>
-                      <td>${cod(doc.data().AU_MODELO)}</td>
-                      <td>${cod(doc.data().AU_MATRICULA)}</td>
-                    </tr>`)
+                      `<li>
+              <div class="campo principal" type=button onclick="muestra('${cod(doc.id)}');extension.classList.toggle('muestra');">
+                ${cod(doc.data().AU_MARCA)} 
+              </div>
+              <div class="campo" type=button onclick="muestra('${cod(doc.id)}')">
+                ${cod(doc.data().AU_MODELO)} 
+            </div>
+            <div class="campo" type=button onclick="muestra('${cod(doc.id)}')">
+                ${cod(doc.data().AU_COLOR)} 
+            </div>
+            </li>`)
                   );
                 console.log(lista)
                 lista.innerHTML = inner;
@@ -158,7 +173,7 @@
           id = "";
           marca.value = "";
           modelo1.value = "";
-          matricula.value = "";
+          color.value = "";
         }
 
         async function muestra(idSel) {
@@ -172,7 +187,7 @@
               let data = doc.data();
               marca.value = data.AU_MARCA || "";
               modelo1.value = data.AU_MODELO || "";
-              matricula.value = data.AU_MATRICULA || "";
+              color.value = data.AU_COLOR || "";
             } else {
               alert(" Auto No registrado.");
               alta();
@@ -186,7 +201,7 @@
             const modelo = {
               AU_MARCA: marca.value.trim(),
               AU_MODELO: modelo1.value.trim(),
-              AU_MATRICULA: matricula.value.trim(),
+              AU_COLOR: color.value.trim()
             };
             if (id) {
               await firestore.collection("AUTO").doc(id).set(modelo);
