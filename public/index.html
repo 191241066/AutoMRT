@@ -99,10 +99,7 @@
         <div class="container mt-5">
             <form >            
                 <div class="row">
-                  <p class="campo flotante">
-                    <textarea id="marca" rows="3" required></textarea>
-                    <label for="marca">Marca del auto </label>
-                  </p>
+                  
                   <p class="campo flotante">
                     <textarea id="modelo1" rows="3" required></textarea>
                     <label for="modelo1">Modelo del auto </label>
@@ -171,7 +168,7 @@
           agregar.disabled = true;
           eliminar.disabled = true;
           id = "";
-          marca.value = "";
+         
           modelo1.value = "";
           color.value = "";
         }
@@ -185,7 +182,7 @@
             if (doc.exists) {
               id = doc.id;
               let data = doc.data();
-              marca.value = data.AU_MARCA || "";
+            
               modelo1.value = data.AU_MODELO || "";
               color.value = data.AU_COLOR || "";
             } else {
@@ -199,7 +196,7 @@
         async function guarda() {
           try {
             const modelo = {
-              AU_MARCA: marca.value.trim(),
+              
               AU_MODELO: modelo1.value.trim(),
               AU_COLOR: color.value.trim()
             };
